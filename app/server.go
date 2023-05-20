@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 )
@@ -29,19 +30,18 @@ func main() {
 			panic(err)
 		}
 
+		buf := make([]byte, 1024)
 		// handle connections in new go routine
-		go func(conn net.Conn) {
-			buf := make([]byte, 1024)
-			len, err := conn.Read(buf)
-			if err != nil {
-				fmt.Printf("Error reading: %#v\n", err)
-				return
-			}
-			fmt.Printf("Message received: %s\n", string(buf[:len]))
+		_, err = conn.Read(buf)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			fmt.Printf("Error reading: %#v\n", err)
+			return
+		}
+		// fmt.Printf("Message received: %s\n", string(buf[:len]))
 
-			conn.Write([]byte("+PONG\r\n"))
-			conn.Close()
-		}(conn)
+		conn.Write([]byte("+PONG\r\n"))
 	}
-
 }
