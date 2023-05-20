@@ -30,5 +30,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	conn.Write([]byte("+PONG\r\n"))
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			panic(err)
+		}
+
+		// handle connections in new go routine
+		go func(conn net.Conn) {
+			buf := make([]byte, 1024)
+			len, err := conn.Read(buf)
+			if err != nil {
+				fmt.Printf("Error reading: %#v\n", err)
+				return
+			}
+			fmt.Printf("Message received: %s\n", string(buf[:len]))
+
+			conn.Write([]byte("+PONG\r\n"))
+			conn.Close()
+		}(conn)
+	}
+
 }
