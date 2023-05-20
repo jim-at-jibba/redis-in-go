@@ -23,13 +23,6 @@ func main() {
 
 	defer conn.Close()
 
-	buf := make([]byte, 1024)
-
-	if _, err := conn.Read(buf); err != nil {
-		fmt.Println("Error reading from client", err.Error())
-		os.Exit(1)
-	}
-
 	for {
 		conn, err := l.Accept()
 		if err != nil {
