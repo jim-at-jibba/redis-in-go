@@ -25,11 +25,6 @@ func main() {
 	defer conn.Close()
 
 	for {
-		conn, err := l.Accept()
-		if err != nil {
-			panic(err)
-		}
-
 		buf := make([]byte, 1024)
 		// handle connections in new go routine
 		_, err = conn.Read(buf)
